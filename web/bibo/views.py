@@ -69,7 +69,9 @@ def api_register_with_beacon(req):
     if req.method == 'POST':
         vehicle = Vehicle.objects.get(beacon__name = req.POST['beacon_name'])
         profile = Profile.objects.get(id = req.POST['profile_id'])
-        piv = ProfileInVehicle(vehicle = vehicle, profile = profile, lat_in = float(req.POST['lat']), lng_in = float(req.POST['lng']))
+        lat = float(req.POST['lat'])
+        lng = float(req.POST['lng'])
+        piv = ProfileInVehicle(vehicle = vehicle, profile = profile, lat_in = lat, lng_in = lng, pt_in = Point.nearest_point(lat, lng))
         piv.save()
         result['ok'] = True
         result['id'] = piv.id
@@ -90,7 +92,10 @@ def api_unregister_with_beacon(req):
     if req.method == 'POST':
         piv = ProfileInVehicle.objects.get(id = int(req.POST['id']))
         piv.time_out = datetime.datetime.now()
-        piv.lat_out = float(req.POST['lat'])
-        piv.lng_out = float(req.POST['lng'])
+        lat = float(req.POST['lat'])
+        lng = float(req.POST['lng'])
+        piv.lat_out = lat
+        piv.lng_out = lng
+        piv.pt_out = Point.nearest_point(lat, lng)
         piv.save()
 

@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-
-# Create your models here.
+import math
 
 class Zone(models.Model):
     name = models.CharField(max_length = 100)
@@ -14,9 +13,26 @@ class Point(models.Model):
     lng = models.FloatField()
     typ = models.IntegerField(default=0)
     zone = models.ForeignKey(Zone)
+    address = models.CharField(max_length=100)
 
     def __str__(self):
-        return "%0.6f, %0.6f, %s" % (self.lat, self.lng, str(self.zone))
+        return "%0.6f, %0.6f, %s, %s" % (self.lat, self.lng, str(self.zone), self.address)
+
+    def distance_to(self, lat, lng):
+        return math.sqrt( (self.lat-lat)*(self.lat-lat) + (self.lng-lng)(self.lng*lng) )
+
+    @staticmethod
+    def nearest_point(lat, lng):
+        weights = []
+        for pt in Point.objects.all():
+            weights.append((pt, pt.distance_to(lat, lng)))
+        min_w = 10000
+        min_pt = None
+        for w in weights:
+            if w[1] < min_w:
+                min_w = w[1]
+                min_pt = w[0]
+        return min_pt
 
 class Line(models.Model):
     name = models.CharField(max_length = 100)
@@ -69,9 +85,11 @@ class ProfileInVehicle(models.Model):
     time_in = models.DateTimeField(auto_now_add=True)
     lat_in = models.FloatField()
     lng_in = models.FloatField()
+    pt_in = models.ForeignKey(Point, related_name='inpt')
     time_out = models.DateTimeField(null=True, blank=True)
     lat_out = models.FloatField(null=True, blank=True)
     lng_out = models.FloatField(null=True, blank=True)
+    pt_out = models.ForeignKey(Point, null=True, blank=True, related_name='outpt')
 
     def __str__(self):
         return "%s %s %s %s" % (str(self.profile), str(self.vehicle), str(self.time_in), str(self.time_out))
