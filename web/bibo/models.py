@@ -12,7 +12,7 @@ class Zone(models.Model):
 class Point(models.Model):
     lat = models.FloatField()
     lng = models.FloatField()
-    typ = models.IntegerField()
+    typ = models.IntegerField(default=0)
     zone = models.ForeignKey(Zone)
 
     def __str__(self):
@@ -67,7 +67,11 @@ class ProfileInVehicle(models.Model):
     profile = models.ForeignKey(Profile)
     vehicle = models.ForeignKey(Vehicle)
     time_in = models.DateTimeField(auto_now_add=True)
+    lat_in = models.FloatField()
+    lng_in = models.FloatField()
     time_out = models.DateTimeField(null=True, blank=True)
+    lat_out = models.FloatField(null=True, blank=True)
+    lng_out = models.FloatField(null=True, blank=True)
 
     def __str__(self):
         return "%s %s %s %s" % (str(self.profile), str(self.vehicle), str(self.time_in), str(self.time_out))

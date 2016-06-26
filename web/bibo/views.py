@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -55,4 +56,41 @@ def login(req):
     return JsonResponse(result)
 
 
+@csrf_exempt
+def api_register_with_beacon(req):
+    """
+    POST parameters:
+        * beacon_name
+        * profile_id
+        * lat
+        * lng
+    """
+    result = {}
+    if req.method == 'POST':
+        vehicle = Vehicle.objects.get(beacon__name = req.POST['beacon_name'])
+        profile = Profile.objects.get(id = req.POST['profile_id'])
+        piv = ProfileInVehicle(vehicle = vehicle, profile = profile, lat_in = float(req.POST['lat']), lng_in = float(req.POST['lng']))
+        piv.save()
+        result['ok'] = True
+        result['id'] = piv.id
+    else:
+        result['ok'] = False
+        result['msg'] = "Unsupported method"
+    return JsonResponse(result)
+
+@csrf_exempt
+def api_unregister_with_beacon(req):
+    """
+    POST parameters:
+        * id (returned from register_with_beacon)
+        * lat
+        * lng
+    """
+    result = {}
+    if req.method == 'POST':
+        piv = ProfileInVehicle.objects.get(id = int(req.POST['id']))
+        piv.time_out = datetime.datetime.now()
+        piv.lat_out = float(req.POST['lat'])
+        piv.lng_out = float(req.POST['lng'])
+        piv.save()
 
