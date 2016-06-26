@@ -56,8 +56,9 @@ class VehiclePosition(models.Model):
         return "%s %s %s" % (str(self.lat), str(self.lng), str(self.time))
 
 class Profile(models.Model):
-    money = models.FloatField()
     user = models.ForeignKey(User)
+    money = models.FloatField()
+    disabled = models.IntegerField(default=0)
 
     def __str__(self):
         return str(self.user)
