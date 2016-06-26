@@ -111,6 +111,15 @@ def api_unregister_with_beacon(req):
             price += lp.zone.price
 
         piv.price = price
-
         piv.save()
+
+        result['ok'] = True
+        result['pt1'] = str(piv.pt_in)
+        result['pt2'] = str(piv.pt_out)
+        result['price'] = piv.price
+    else:
+        result['ok'] = False
+        result['msg'] = "Unsupported method"
+
+    return JsonResponse(result)
 
