@@ -97,5 +97,20 @@ def api_unregister_with_beacon(req):
         piv.lat_out = lat
         piv.lng_out = lng
         piv.pt_out = Point.nearest_point(lat, lng)
+
+        lp_in = LinePoint.objects.get(point = piv.pt_in)
+        lp_out = LinePoint.objects.get(point = piv.pt_out)
+
+        if lp_in.seq < lp_out.seq:
+            lpoints = LinePoint.objects.filter(line = lp_in.line, seq__range=(lp_in.seq, lp_out.seq)).order_by('seq')
+        else:
+            lpoints = LinePoint.objects.filter(line = lp_in.line, seq__range=(lp_out.seq, lp_in.seq)).order_by('-seq')
+
+        price = 0
+        for lp in lpoints:
+            price += lp.zone.price
+
+        piv.price = price
+
         piv.save()
 

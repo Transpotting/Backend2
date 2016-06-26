@@ -91,6 +91,7 @@ class ProfileInVehicle(models.Model):
     lat_out = models.FloatField(null=True, blank=True)
     lng_out = models.FloatField(null=True, blank=True)
     pt_out = models.ForeignKey(Point, null=True, blank=True, related_name='outpt')
+    price = models.FloatField(null=True, blank=True)
 
     def __str__(self):
         return "%s %s %s %s" % (str(self.profile), str(self.vehicle), str(self.time_in), str(self.time_out))
