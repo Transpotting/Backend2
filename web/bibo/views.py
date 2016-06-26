@@ -91,7 +91,7 @@ def api_unregister_with_beacon(req):
     result = {}
     if req.method == 'POST':
         piv = ProfileInVehicle.objects.get(id = int(req.POST['id']))
-        piv.time_out = datetime.datetime.now()
+        piv.time_out = datetime.now()
         lat = float(req.POST['lat'])
         lng = float(req.POST['lng'])
         piv.lat_out = lat
@@ -108,7 +108,7 @@ def api_unregister_with_beacon(req):
 
         price = 0
         for lp in lpoints:
-            price += lp.zone.price
+            price += lp.point.zone.price
 
         piv.price = price
         piv.save()

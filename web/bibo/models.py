@@ -2,6 +2,9 @@ from django.db import models
 from django.contrib.auth.models import User
 import math
 
+def sqr(x):
+    return x*x
+
 class Zone(models.Model):
     name = models.CharField(max_length=100)
     price = models.FloatField(default=0)
@@ -20,7 +23,7 @@ class Point(models.Model):
         return "%0.6f, %0.6f, %s, %s" % (self.lat, self.lng, str(self.zone), self.address)
 
     def distance_to(self, lat, lng):
-        return math.sqrt( (self.lat-lat)*(self.lat-lat) + (self.lng-lng)(self.lng*lng) )
+        return math.sqrt(sqr(self.lat-lat) + sqr(self.lng-lng))
 
     @staticmethod
     def nearest_point(lat, lng):
