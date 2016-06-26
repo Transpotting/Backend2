@@ -3,7 +3,8 @@ from django.contrib.auth.models import User
 import math
 
 class Zone(models.Model):
-    name = models.CharField(max_length = 100)
+    name = models.CharField(max_length=100)
+    price = models.FloatField(default=0)
 
     def __str__(self):
         return self.name
